@@ -1,10 +1,14 @@
 package guru.springframework.sfgpetclinic.services.springdatajpa;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,8 +37,9 @@ class SpecialitySDJpaServiceTest {
 	@Test
 	void testDeleteById() {
 		service.deleteById(1L);
-		
-		// By default (verify with 1 argument) it checks that the call is done exactly 1 time
+
+		// By default (verify with 1 argument) it checks that the call is done exactly 1
+		// time
 		verify(specialtyRepository).deleteById(1L);
 	}
 
@@ -42,7 +47,7 @@ class SpecialitySDJpaServiceTest {
 	void testDeleteByIdTwoTimes() {
 		service.deleteById(1L);
 		service.deleteById(1L);
-		
+
 		verify(specialtyRepository, times(2)).deleteById(1L);
 	}
 
@@ -50,7 +55,7 @@ class SpecialitySDJpaServiceTest {
 	void testDeleteByIdAtLeast() {
 		service.deleteById(1L);
 		service.deleteById(1L);
-		
+
 		verify(specialtyRepository, atLeastOnce()).deleteById(1L);
 	}
 
@@ -58,7 +63,7 @@ class SpecialitySDJpaServiceTest {
 	void testDeleteByIdAtMost() {
 		service.deleteById(1L);
 		service.deleteById(1L);
-		
+
 		verify(specialtyRepository, atMost(5)).deleteById(1L);
 	}
 
@@ -66,8 +71,21 @@ class SpecialitySDJpaServiceTest {
 	void testDeleteByIdNever() {
 		service.deleteById(1L);
 		service.deleteById(1L);
-		
+
 		verify(specialtyRepository, never()).deleteById(5L);
+	}
+
+	@Test
+	void testFindById() {
+		Speciality speciality = new Speciality();
+
+		when(specialtyRepository.findById(1L)).thenReturn(Optional.of(speciality));
+		
+		Speciality foundSpeciality = service.findById(1L);
+		
+		assertThat(foundSpeciality).isNotNull();
+		
+		verify(specialtyRepository).findById(1L);
 	}
 
 }
