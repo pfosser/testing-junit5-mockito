@@ -1,6 +1,7 @@
 package guru.springframework.sfgpetclinic.services.springdatajpa;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.never;
@@ -88,4 +89,12 @@ class SpecialitySDJpaServiceTest {
 		verify(specialtyRepository).findById(1L);
 	}
 
+	@Test
+	void testDeleteByObject() {
+		Speciality speciality = new Speciality();
+
+		service.delete(speciality);
+		
+		verify(specialtyRepository).delete(any(Speciality.class));
+	}
 }
