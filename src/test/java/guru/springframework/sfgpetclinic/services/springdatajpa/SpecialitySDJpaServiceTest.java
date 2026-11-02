@@ -9,8 +9,6 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
@@ -40,60 +38,70 @@ class SpecialitySDJpaServiceTest {
 
 	@Test
 	void testDeleteById() {
+		
+		// given - none
+		
+		// when
 		service.deleteById(1L);
 
-		// By default (verify with 1 argument) it checks that the call is done exactly 1
-		// time
-		verify(specialtyRepository).deleteById(1L);
+		// then
+		then(specialtyRepository).should().deleteById(1L);
 	}
 
 	@Test
 	void testDeleteByIdTwoTimes() {
+		
+		// given - none
+		
+		// when
 		service.deleteById(1L);
 		service.deleteById(1L);
 
-		verify(specialtyRepository, times(2)).deleteById(1L);
+		// then
+		then(specialtyRepository).should(times(2)).deleteById(1L);
 	}
 
 	@Test
 	void testDeleteByIdAtLeast() {
+		
+		// given - none
+		
+		// then
 		service.deleteById(1L);
 		service.deleteById(1L);
 
-		verify(specialtyRepository, atLeastOnce()).deleteById(1L);
+		// then
+		then(specialtyRepository).should(atLeastOnce()).deleteById(1L);
 	}
 
 	@Test
 	void testDeleteByIdAtMost() {
+		
+		// given - none
+		
+		// then
 		service.deleteById(1L);
 		service.deleteById(1L);
 
-		verify(specialtyRepository, atMost(5)).deleteById(1L);
+		// then
+		then(specialtyRepository).should(atMost(5)).deleteById(1L);
 	}
 
 	@Test
 	void testDeleteByIdNever() {
+		
+		// given - none
+		
+		// then
 		service.deleteById(1L);
 		service.deleteById(1L);
 
-		verify(specialtyRepository, never()).deleteById(5L);
+		// then
+		then(specialtyRepository).should(never()).deleteById(5L);
 	}
 
 	@Test
 	void testFindById() {
-		Speciality speciality = new Speciality();
-
-		when(specialtyRepository.findById(1L)).thenReturn(Optional.of(speciality));
-
-		Speciality foundSpeciality = service.findById(1L);
-
-		assertThat(foundSpeciality).isNotNull();
-
-		verify(specialtyRepository).findById(1L);
-	}
-
-	@Test
-	void findByIdBddTest() {
 		
 		// given
 		Speciality speciality = new Speciality();
@@ -111,10 +119,14 @@ class SpecialitySDJpaServiceTest {
 
 	@Test
 	void testDeleteByObject() {
+		
+		// given
 		Speciality speciality = new Speciality();
 
+		// when
 		service.delete(speciality);
 
-		verify(specialtyRepository).delete(any(Speciality.class));
+		// then
+		then(specialtyRepository).should().delete(any(Speciality.class));
 	}
 }
