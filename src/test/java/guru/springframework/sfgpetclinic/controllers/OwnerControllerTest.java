@@ -2,16 +2,18 @@ package guru.springframework.sfgpetclinic.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -31,6 +33,9 @@ class OwnerControllerTest {
 
 	@Mock
 	OwnerService service;
+	
+	@Mock
+	Model model;
 
 	@InjectMocks
 	OwnerController controller;
@@ -108,13 +113,18 @@ class OwnerControllerTest {
 		// given
 		setUp();
 		Owner owner = new Owner(1L, "Joe", "FindMe");
+		InOrder inOrder = Mockito.inOrder(service, model);
 
 		// when
-		String viewName = controller.processFindForm(owner, bindingResult, Mockito.mock(Model.class));
+		String viewName = controller.processFindForm(owner, bindingResult, model);
 
 		// then
 		assertThat("%" + owner.getLastName() + "%").isEqualToIgnoringCase(stringArgumentCaptor.getValue());
 		assertThat("owners/ownersList").isEqualToIgnoringCase(viewName);
+		
+		// inorder asserts (the order of the verifications is what counts)
+		inOrder.verify(service).findAllByLastNameLike(anyString());
+		inOrder.verify(model).addAttribute(anyString(), anyList());
 	}
 	
 	@Test
