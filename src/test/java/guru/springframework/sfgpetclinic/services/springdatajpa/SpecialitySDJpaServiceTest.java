@@ -9,10 +9,10 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -23,6 +23,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import guru.springframework.sfgpetclinic.model.Speciality;
 import guru.springframework.sfgpetclinic.repositories.SpecialtyRepository;
@@ -51,7 +53,8 @@ class SpecialitySDJpaServiceTest {
 		service.deleteById(1L);
 
 		// then
-		then(specialtyRepository).should().deleteById(1L);
+		// time verifications can depend on the workstation
+		then(specialtyRepository).should(timeout(100)).deleteById(1L);
 	}
 
 	@Test
@@ -77,7 +80,7 @@ class SpecialitySDJpaServiceTest {
 		service.deleteById(1L);
 
 		// then
-		then(specialtyRepository).should(atLeastOnce()).deleteById(1L);
+		then(specialtyRepository).should(timeout(100).atLeastOnce()).deleteById(1L);
 	}
 
 	@Test
@@ -187,6 +190,8 @@ class SpecialitySDJpaServiceTest {
 	}
 
 	@Test
+	// Necessary because the repository is instructed to return something only on match
+	@MockitoSettings(strictness = Strictness.LENIENT)
 	void testSaveLambdaNoMatch() {
 		// given
 		final String MATCH_ME = "MATCH_ME";
