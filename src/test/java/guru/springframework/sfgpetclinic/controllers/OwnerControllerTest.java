@@ -5,6 +5,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,7 +127,8 @@ class OwnerControllerTest {
 		
 		// inorder asserts (the order of the verifications is what counts)
 		inOrder.verify(service).findAllByLastNameLike(anyString());
-		inOrder.verify(model).addAttribute(anyString(), anyList());
+		inOrder.verify(model, times(1)).addAttribute(anyString(), anyList());
+		verifyNoMoreInteractions(model);
 	}
 	
 	@Test
@@ -136,9 +140,12 @@ class OwnerControllerTest {
 		// when
 		String viewName = controller.processFindForm(owner, bindingResult, null);
 
+		verifyNoMoreInteractions(service);
+
 		// then
 		assertThat("%" + owner.getLastName() + "%").isEqualToIgnoringCase(stringArgumentCaptor.getValue());
 		assertThat("owners/findOwners").isEqualToIgnoringCase(viewName);
+		verifyZeroInteractions(model);
 	}
 	
 	@Test
@@ -153,5 +160,6 @@ class OwnerControllerTest {
 		// then
 		assertThat("%" + owner.getLastName() + "%").isEqualToIgnoringCase(stringArgumentCaptor.getValue());
 		assertThat("redirect:/owners/1").isEqualToIgnoringCase(viewName);
+		verifyZeroInteractions(model);
 	}
 }
